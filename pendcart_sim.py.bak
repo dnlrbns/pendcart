@@ -1,0 +1,30 @@
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+# params
+M = 2
+m = 1
+l = 0.5
+I = 1/12 * m * l**2
+g=9.8
+print('I is:', I)
+
+def dX_dt(X,t):
+    dx = X[2]
+    dtheta = X[3]
+    ddx_num = ((1/4)*m*l+I)*m*l*np.sin(X[1])*X[3]**2 + m**2 * l**2 *g*np.sin(X[1])*np.cos(X[1]) 
+    ddx_den = 2*(M+m)*((1/4)*m*l + I) + ((1/2)* m**2 * l**2 * np.cos(X[1])**2)
+    ddx = ddx_num/ddx_den
+    ddtheta = ((-1/2)*m*l*np.cos(X[1])*ddx - m*g*l*np.sin(X[1]))/((1/4)*m*l + I)
+
+    dX = [dx, dtheta, ddx, ddtheta]
+    return dX
+
+t = np.linspace(0,50,2000)
+
+sol = odeint(dX_dt, [0.0, np.deg2rad(10), 0.0, 0.0],t)
+print(np.shape(sol[:,0]))
+print(np.shape(t))
+# plt.plot(t, sol[:,0],t, sol[:,1],t, sol[:,2],t, sol[:,3],)
+plt.plot(t, np.rad2deg(sol[:,1]))
+plt.show()
